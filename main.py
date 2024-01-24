@@ -22,7 +22,10 @@ async def get_weather_all(latitude: float, longtitude: float):
             response.raise_for_status()
             return response.json()
         except httpx.HTTPStatusError as e:
-            raise HTTPException(status_code=e.response.status_code, detail=str(e))
+            raise HTTPException(
+                status_code=e.response.status_code,
+                detail=str(e),
+            )
 
 
 @app.get("/weather/choice/")
