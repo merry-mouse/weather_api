@@ -1,13 +1,20 @@
 from typing import Optional
 
 import httpx
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import Depends, FastAPI, HTTPException, Query
 
 from config import USER_AGENT
 
 app = FastAPI()
 
 YR_API_URL = "https://api.met.no/weatherapi/locationforecast/2.0/compact"
+
+
+def query_param(param_name: str):
+    def inner_query_param(value: bool = Query(None, alias=param_name)):
+        return value is not None
+
+    return inner_query_param
 
 
 @app.get("/weather/all/")
@@ -32,14 +39,14 @@ async def get_weather_all(latitude: float, longtitude: float):
 async def get_weather_details(
     latitude: float,
     longtitude: float,
-    air_pressure_at_sea_level: Optional[bool] = Query(
-        None, alias="airPressureAtSeaLevel"
+    air_pressure_at_sea_level: Optional[bool] = Depends(
+        query_param("air_pressure_at_sea_level")
     ),
-    air_temperature: Optional[bool] = Query(None, alias="airTemperature"),
-    cloud_area_fraction: Optional[bool] = Query(None, alias="cloudAreaFraction"),
-    relative_humidity: Optional[bool] = Query(None, alias="relativeHumidity"),
-    wind_from_direction: Optional[bool] = Query(None, alias="windFromDirection"),
-    wind_speed: Optional[bool] = Query(None, alias="windSpeed"),
+    air_temperature: Optional[bool] = Depends(query_param("air_temperature")),
+    cloud_area_fraction: Optional[bool] = Depends(query_param("cloud_area_fraction")),
+    relative_humidity: Optional[bool] = Depends(query_param("relative_humidity")),
+    wind_from_direction: Optional[bool] = Depends(query_param("wind_from_direction")),
+    wind_speed: Optional[bool] = Depends(query_param("wind_speed")),
 ):
     async with httpx.AsyncClient() as client:
         try:
