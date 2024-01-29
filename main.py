@@ -1,3 +1,5 @@
+import json
+from collections import defaultdict
 from typing import Optional
 
 import httpx
@@ -62,6 +64,7 @@ async def get_weather_details(
                 )
             else:
                 response_data = response.json()
+                print(json.dumps(response_data, indent=4))
                 chosen_details = {
                     "air_pressure_at_sea_level": air_pressure_at_sea_level,
                     "air_temperature": air_temperature,
@@ -84,16 +87,31 @@ async def get_weather_details(
             raise HTTPException(status_code=e.response.status_code, detail=str(e))
 
 
-def flatten_weather_data(response_data, choisen_details):
-    flatterened_data = []
+def flatten_weather_data(response_data, chosen_details):
+    # Initialize a defaultdict to hold lists of entries for each date
+    formatted_data = defaultdict(list)
+
+    # Loop through each entry in the timeseries
     for timeseries_entry in response_data["properties"]["timeseries"]:
-        entry = {"time": timeseries_entry["time"]}
+        # Extract the timestamp and split into date and time
+        timestamp = timeseries_entry["time"]
+        date, time = timestamp.split("T")
+        time = time[:-1]  # Remove the 'Z' at the end
+
+        # Create a dictionary entry for the time and relevant details
+        entry = {"time": time}
         details = timeseries_entry["data"]["instant"]["details"]
-        for detail in choisen_details:
+
+        # Add chosen details to the entry
+        for detail in chosen_details:
             if detail in details:
                 entry[detail] = details[detail]
-        flatterened_data.append(entry)
-    return flatterened_data
+
+        # Append the entry to the list for the corresponding date
+        formatted_data[date].append(entry)
+
+    # Convert the defaultdict to a regular dictionary for JSON serialization
+    return dict(formatted_data)
 
 
 if __name__ == "__main__":
