@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends
 
-from api.utils.weather_utils import get_weather_all, get_weather_details, query_param
+from api.utils.weather_utils import (get_weather_all, get_weather_details,
+                                     query_param)
 
 router = APIRouter()
 
