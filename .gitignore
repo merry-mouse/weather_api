@@ -1,3 +1,4 @@
 config.py
 .new_venv
 __pycache__
+.venv
