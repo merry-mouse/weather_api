@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Depends
 
-from api.utils.weather_utils import (get_weather_all, get_weather_details,
-                                     query_param)
+from api.utils.weather_utils import get_weather_all, get_weather_details, query_param
 
 router = APIRouter()
 
@@ -14,7 +13,7 @@ async def weather_all_route(latitude: float, longitude: float):
 @router.get("/weather/choice/")
 async def weather_choice_route(
     latitude: float,
-    longtitude: float,
+    longitute: float,
     air_temperature: bool = Depends(query_param("air_temperature")),
     air_pressure_at_sea_level: bool = Depends(query_param("air_pressure_at_sea_level")),
     cloud_area_fraction: bool = Depends(query_param("cloud_area_fraction")),
@@ -24,7 +23,7 @@ async def weather_choice_route(
 ):
     return await get_weather_details(
         latitude,
-        longtitude,
+        longitute,
         air_temperature,
         air_pressure_at_sea_level,
         cloud_area_fraction,

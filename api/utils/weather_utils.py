@@ -15,12 +15,12 @@ def query_param(param_name: str):
     return inner_query_param
 
 
-async def get_weather_all(latitude: float, longtitude: float):
+async def get_weather_all(latitude: float, longitude: float):
     async with httpx.AsyncClient() as client:
         try:
             response = await client.get(
                 YR_API_URL,
-                params={"lat": latitude, "lon": longtitude},
+                params={"lat": latitude, "lon": longitude},
                 headers={"User-Agent": USER_AGENT},
             )
             response.raise_for_status()
@@ -34,7 +34,7 @@ async def get_weather_all(latitude: float, longtitude: float):
 
 async def get_weather_details(
     latitude: float,
-    longtitude: float,
+    longitude: float,
     air_temperature: bool = False,
     air_pressure_at_sea_level: bool = False,
     cloud_area_fraction: bool = False,
@@ -46,7 +46,7 @@ async def get_weather_details(
         try:
             response = await client.get(
                 YR_API_URL,
-                params={"lat": latitude, "lon": longtitude},
+                params={"lat": latitude, "lon": longitude},
                 headers={"User-Agent": USER_AGENT},
             )
             if response.status_code != 200:
